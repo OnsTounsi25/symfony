@@ -1,4 +1,4 @@
-{% extends 'base_front.html.twig' %}
+{% extends 'back-office.html.twig' %}
 
 {% block title %}Produit {% endblock %}
 
@@ -25,7 +25,7 @@
                 <td>{{ produit.description }}</td>
                 <td>{{ produit.prix }}</td>
                 <td>{{ produit.quantiteenstock }}</td>
-                <td>{{ produit.image }}</td>
+                <td colspan="2"><img src="{{ asset('images/' ~ produit.image) }}" alt="Image" style="max-width: 100px;"></td>
 
                 <td>
                     <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>

@@ -4,9 +4,12 @@ namespace App\Form;
 
 use App\Entity\Produit;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints\Type;
 
 class ProduitType extends AbstractType
 {
@@ -20,8 +23,8 @@ class ProduitType extends AbstractType
             ->add('idcategorie')
             ->add('image', FileType::class, [
                 'label' => 'Image (JPEG, PNG, GIF)',
-                'required' => false,  // Permettre que le champ soit vide
-                'mapped' => false,   // Ne pas mapper directement ce champ à la propriété 'image' de l'entité
+                'mapped' => false, // Don't map this field to any property of the entity
+                'required' => false, // Allow the field to be empty
             ]);
     }
 

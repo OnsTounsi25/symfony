@@ -6,6 +6,7 @@ use App\Entity\Produit;
 use App\Form\ProduitType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,43 +30,32 @@ class ProduitController extends AbstractController
 
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
-{
-    $produit = new Produit();
-    $form = $this->createForm(ProduitType::class, $produit);
-    $form->handleRequest($request);
+    {
+        $produit = new Produit();
+        $form = $this->createForm(ProduitType::class, $produit);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $form->get('image')->getData();
-        
-        if ($uploadedFile) {
-            $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
-
-            try {
-                $uploadedFile->move(
-                    $this->getParameter('images_directory'),
-                    $newFilename
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('image')->getData();
+            if ($file) {
+                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+                $file->move(
+                    $this->getParameter('upload_directory'),
+                    $fileName
                 );
-            } catch (FileException $e) {
-                // Gérez l'erreur de téléchargement ici
+                $produit->setImage($fileName);
             }
+            $entityManager->persist($produit);
+            $entityManager->flush();
 
-            $produit->setImage($newFilename);
+            return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $entityManager->persist($produit);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
+        return $this->renderForm('produit/new.html.twig', [
+            'produit' => $produit,
+            'form' => $form,
+        ]);
     }
-
-    return $this->renderForm('produit/new.html.twig', [
-        'produit' => $produit,
-        'form' => $form,
-    ]);
-}
 
     #[Route('/{id}', name: 'app_produit_show', methods: ['GET'])]
     public function show(Produit $produit): Response
