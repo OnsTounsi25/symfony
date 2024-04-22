@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Produit
@@ -25,6 +26,7 @@ class Produit
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
      */
     private $nom;
 
@@ -32,6 +34,7 @@ class Produit
      * @var string
      *
      * @ORM\Column(name="description", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
      */
     private $description;
 
@@ -39,6 +42,7 @@ class Produit
      * @var float
      *
      * @ORM\Column(name="prix", type="float", precision=10, scale=0, nullable=false)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
      */
     private $prix;
 
@@ -46,6 +50,7 @@ class Produit
      * @var int
      *
      * @ORM\Column(name="quantiteEnStock", type="integer", nullable=false)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
      */
     private $quantiteenstock;
 
@@ -56,6 +61,7 @@ class Produit
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="idCategorie", referencedColumnName="idCategorie")
      * })
+     * @Assert\NotNull(message="La catégorie doit être sélectionnée.")
      */
     private $idcategorie;
 

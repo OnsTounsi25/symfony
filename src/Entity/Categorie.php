@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Categorie
@@ -30,6 +31,7 @@ class Categorie
      * @var string
      *
      * @ORM\Column(name="nomCategorie", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
      */
     private $nomcategorie;
 
