@@ -65,6 +65,18 @@ class Produit
      */
     private $idcategorie;
 
+    /**
+     * @var string|null
+    * 
+    * @ORM\Column(name="image", type="string", length=255, nullable=true)
+    * @Assert\File(
+    *     maxSize = "5M",
+    *     mimeTypes = {"image/jpeg", "image/png", "image/gif"},
+    *     mimeTypesMessage = "Veuillez télécharger une image de type JPEG, PNG ou GIF."
+    * )
+    */
+    private $image;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -129,6 +141,19 @@ class Produit
 
         return $this;
     }
+    public function getImage(): ?Image
+    {
+        return $this->image;
+    }
+
+    public function setImage(?Image $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+
 
 
 }
