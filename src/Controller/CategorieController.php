@@ -3,7 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Categorie;
+use App\Entity\Produit;
 use App\Form\CategorieType;
+use App\Form\ProduitType;
+
+use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +28,25 @@ class CategorieController extends AbstractController
             'categories' => $categories,
         ]);
     }
+    #[Route('/newProduit', name: 'app_produit_new', methods: ['GET', 'POST'])]
+    public function newProduit(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $produit = new Produit();
+        $form = $this->createForm(ProduitType::class, $produit);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($produit);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('produit/new.html.twig', [
+            'produit' => $produit,
+            'form' => $form,
+        ]);
+    }
 
     #[Route('/new', name: 'app_categorie_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -38,6 +61,7 @@ class CategorieController extends AbstractController
 
             return $this->redirectToRoute('app_categorie_index', [], Response::HTTP_SEE_OTHER);
         }
+       
 
         return $this->renderForm('categorie/new.html.twig', [
             'categorie' => $categorie,
@@ -81,4 +105,30 @@ class CategorieController extends AbstractController
 
         return $this->redirectToRoute('app_categorie_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/{idcategorie}/produits', name: 'app_categorie_produits', methods: ['GET'])]
+public function produits(int $idcategorie, EntityManagerInterface $entityManager): Response
+{
+    // Récupérer la catégorie par ID
+    $categorie = $entityManager->getRepository(Categorie::class)->find($idcategorie);
+
+    // Vérifier si la catégorie existe
+    if (!$categorie) {
+        throw $this->createNotFoundException('Catégorie non trouvée.');
+    }
+
+    // Récupérer les produits associés à cette catégorie
+    $produits = $entityManager->getRepository(Produit::class)->findBy([
+        'idcategorie' => $categorie,
+    ]);
+
+    // Rendre la vue Twig avec les produits
+    return $this->render('categorie/produits.html.twig', [
+        'categorie' => $categorie,
+        'produits' => $produits,
+    ]);
+}
+
+
+    
+
 }

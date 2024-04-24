@@ -3,7 +3,7 @@
 {% block title %}Categorie index{% endblock %}
 
 {% block body %}
-    <h1>Categorie index</h1>
+    <h1>Categories</h1>
 
     <table class="table">
         <thead>
@@ -14,22 +14,25 @@
             </tr>
         </thead>
         <tbody>
-        {% for categorie in categories %}
-            <tr>
-                <td>{{ categorie.idcategorie }}</td>
-                <td>{{ categorie.nomcategorie }}</td>
-                <td>
-                    <a href="{{ path('app_categorie_show', {'idcategorie': categorie.idcategorie}) }}">show</a>
-                    <a href="{{ path('app_categorie_edit', {'idcategorie': categorie.idcategorie}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
+            {% for categorie in categories %}
+                <tr>
+                    <td>{{ categorie.idcategorie }}</td>
+                    <td>{{ categorie.nomcategorie }}</td>
+                    <td>
+                    
+                        <a href="{{ path('app_categorie_show', {'idcategorie': categorie.idcategorie}) }}">Detail</a>
+                        <a href="{{ path('app_produit_new', {'idcategorie': categorie.idcategorie}) }}">ajouter un produit</a>
+                        <a href="{{ path('app_categorie_edit', {'idcategorie': categorie.idcategorie}) }}">Modifier</a>
+                        <a href="{{ path('app_categorie_produits', {'idcategorie': categorie.idcategorie}) }}">Afficher produits</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_categorie_new') }}">Create new</a>
+    <a href="{{ path('app_categorie_new') }}">Ajouter une nouvelle categorie</a>
 {% endblock %}
