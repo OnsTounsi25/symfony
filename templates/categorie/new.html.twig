@@ -5,7 +5,16 @@
 {% block body %}
     <h1>Create new Categorie</h1>
 
+    {# Inclusion du formulaire de création de catégorie #}
     {{ include('categorie/_form.html.twig') }}
 
-    <a href="{{ path('app_categorie_index') }}">back to list</a>
+    {# Affichage des messages flash de succès #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {# Lien pour retourner à la liste des catégories #}
+    <a href="{{ path('app_categorie_index') }}">Back to list</a>
 {% endblock %}

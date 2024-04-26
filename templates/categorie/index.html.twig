@@ -10,7 +10,7 @@
             <tr>
                 <th>Idcategorie</th>
                 <th>Nomcategorie</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -19,11 +19,12 @@
                     <td>{{ categorie.idcategorie }}</td>
                     <td>{{ categorie.nomcategorie }}</td>
                     <td>
-                    
-                        <a href="{{ path('app_categorie_show', {'idcategorie': categorie.idcategorie}) }}">Detail</a>
-                        <a href="{{ path('app_produit_new', {'idcategorie': categorie.idcategorie}) }}">ajouter un produit</a>
+                        <a href="{{ path('app_categorie_show', {'idcategorie': categorie.idcategorie}) }}">Détail</a>
+                        <a href="{{ path('app_produit_new', {'idcategorie': categorie.idcategorie}) }}">Ajouter un produit</a>
                         <a href="{{ path('app_categorie_edit', {'idcategorie': categorie.idcategorie}) }}">Modifier</a>
                         <a href="{{ path('app_categorie_produits', {'idcategorie': categorie.idcategorie}) }}">Afficher produits</a>
+                        <a href="{{ path('app_produit_statistics', {'idcategorie': categorie.idcategorie}) }}">Voir les statistiques des produits</a>
+
                     </td>
                 </tr>
             {% else %}
@@ -34,5 +35,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_categorie_new') }}">Ajouter une nouvelle categorie</a>
+    <a href="{{ path('app_categorie_new') }}">Ajouter une nouvelle catégorie</a>
 {% endblock %}

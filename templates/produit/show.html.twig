@@ -28,14 +28,14 @@
                 <td>{{ produit.quantiteenstock }}</td>
             </tr>
             <tr>
-                    <td colspan="2"><img src="{{ asset('images/' ~ produit.image) }}" alt="Image" style="max-width: 500px;"></td>
+                    <td colspan="2"><img src="{{asset('images/' ~ produit.image) }}" alt="Image" style="max-width: 500px;"></td>
                 </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_produit_index') }}">back to list</a>
+    <P><a href="{{ path('app_produit_index') }}">Retourner a la liste des produits</a></P>
 
-    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+    <P><a href="{{ path('app_produit_edit', {'id': produit.id}) }}">Modifier</a></P>
 
-    {{ include('produit/_delete_form.html.twig') }}
+    <P>{{ include('produit/_delete_form.html.twig') }}</P>
 {% endblock %}

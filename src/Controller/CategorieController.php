@@ -38,6 +38,7 @@ class CategorieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($produit);
             $entityManager->flush();
+            $this->addFlash('success', 'Produit créé avec succès! ');
 
             return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -58,6 +59,7 @@ class CategorieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($categorie);
             $entityManager->flush();
+            $this->addFlash('success', 'Categorie créé avec succès! ');
 
             return $this->redirectToRoute('app_categorie_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -85,6 +87,7 @@ class CategorieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+           
 
             return $this->redirectToRoute('app_categorie_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -127,6 +130,7 @@ public function produits(int $idcategorie, EntityManagerInterface $entityManager
         'produits' => $produits,
     ]);
 }
+
 
 
     

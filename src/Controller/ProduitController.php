@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Form\ProduitType;
+use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 #[Route('/produit')]
 class ProduitController extends AbstractController
@@ -47,6 +49,7 @@ class ProduitController extends AbstractController
             }
             $entityManager->persist($produit);
             $entityManager->flush();
+            $this->addFlash('success', 'Produit créé avec succès! ');
 
             return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -93,4 +96,18 @@ class ProduitController extends AbstractController
 
         return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
     }
+    /**
+     * @Route("/produit-statistics", name="produit_statistics")
+     */
+    public function produitStatistics(ProduitRepository $produitRepository): Response
+    {
+        // Récupérer les statistiques sur le nombre de produits par catégorie
+        $produitStats = $produitRepository->countProduitsByCategorie();
+
+        return $this->render('categorie/produit_statistics.html.twig', [
+            'produitStats' => $produitStats,
+        ]);
+    }
+ 
+
 }

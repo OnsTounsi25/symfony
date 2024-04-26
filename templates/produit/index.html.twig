@@ -28,8 +28,8 @@
         <td colspan="2"><img src="{{ asset('images/' ~ produit.image) }}" alt="Image" style="max-width: 50px;"></td>
 
         <td>
-            <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
-            <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+            <a href="{{ path('app_produit_show', {'id': produit.id}) }}">Detail</a>
+            <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">Modifier</a>
         </td>
     </tr>
 {% else %}
@@ -41,7 +41,7 @@
         </tbody>
     </table>
 
-    <p><a href="{{ path('app_produit_new') }}">Create new</a></p>
+    <p><a href="{{ path('app_produit_new') }}">Ajouter un nouveau produit</a></p>
     
     <p><a href="{{ path('app_categorie_index') }}">Retourner a la liste des categories</a></p>
 {% endblock %}
