@@ -5,3 +5,12 @@
 app_produit_statistics:
     path: /produit-statistics
     controller: App\Controller\ProduitController::produitStatistics
+app_categorie_download_excel:
+    path: /download-categories-excel
+    controller: App\Controller\CategorieController::downloadCategoriesExcel
+app_categorie_download_pdf:
+    path: /download-categories-pdf
+    controller: App\Controller\CategorieController::downloadCategoriesPdf
+app_produit_download_pdf:
+    path: /download-products-pdf
+    controller: App\Controller\ProduitController::downloadProductsPdf

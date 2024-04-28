@@ -13,6 +13,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use Mpdf\Mpdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+
 
 #[Route('/categorie')]
 class CategorieController extends AbstractController
@@ -111,30 +119,98 @@ class CategorieController extends AbstractController
         return $this->redirectToRoute('app_categorie_index', [], Response::HTTP_SEE_OTHER);
     }
     #[Route('/{idcategorie}/produits', name: 'app_categorie_produits', methods: ['GET'])]
-public function produits(int $idcategorie, EntityManagerInterface $entityManager): Response
-{
-    // Récupérer la catégorie par ID
-    $categorie = $entityManager->getRepository(Categorie::class)->find($idcategorie);
+    public function produits(int $idcategorie, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer la catégorie par ID
+        $categorie = $entityManager->getRepository(Categorie::class)->find($idcategorie);
 
-    // Vérifier si la catégorie existe
-    if (!$categorie) {
-        throw $this->createNotFoundException('Catégorie non trouvée.');
+        // Vérifier si la catégorie existe
+        if (!$categorie) {
+            throw $this->createNotFoundException('Catégorie non trouvée.');
+        }
+
+        // Récupérer les produits associés à cette catégorie
+        $produits = $entityManager->getRepository(Produit::class)->findBy([
+            'idcategorie' => $categorie,
+        ]);
+
+        // Rendre la vue Twig avec les produits
+        return $this->render('categorie/produits.html.twig', [
+            'categorie' => $categorie,
+            'produits' => $produits,
+        ]);
     }
+    #[Route('/download-categories-pdf', name: 'app_categorie_download_pdf', methods: ['GET'])]
+    public function downloadCategoriesPdf(CategorieRepository $categorieRepository): Response
+    {
+        // Récupérer la liste des catégories
+        $categories = $categorieRepository->findAll();
 
-    // Récupérer les produits associés à cette catégorie
-    $produits = $entityManager->getRepository(Produit::class)->findBy([
-        'idcategorie' => $categorie,
-    ]);
+        // Configuration de Dompdf
+        $options = new Options();
+        $options->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($options);
 
-    // Rendre la vue Twig avec les produits
-    return $this->render('categorie/produits.html.twig', [
-        'categorie' => $categorie,
-        'produits' => $produits,
-    ]);
-}
+        // Générer le contenu PDF avec les catégories
+        $html = $this->renderView('categorie/pdf.html.twig', [
+            'categories' => $categories,
+        ]);
 
+        // Charger le contenu HTML dans Dompdf
+        $dompdf->loadHtml($html);
 
+        // Générer le PDF
+        $dompdf->render();
 
+        // Envoyer le PDF en réponse HTTP
+        $response = new Response($dompdf->output());
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment;filename="categories.pdf"');
+
+        return $response;
+    }
+    #[Route('/download-categories-excel', name: 'app_categorie_download_excel', methods: ['GET'])]
+    public function downloadCategoriesExcel(CategorieRepository $categorieRepository): Response
+    {
+        // Récupérer la liste des catégories
+        $categories = $categorieRepository->findAll();
+    
+        // Créer un nouvel objet Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        // Entêtes de colonnes
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Nom');
+    
+        // Remplir les lignes avec les données des catégories
+        $row = 2;
+        foreach ($categories as $categorie) {
+            $sheet->setCellValue('A' . $row, $categorie->getIdcategorie());
+            $sheet->setCellValue('B' . $row, $categorie->getNomcategorie());
+            $row++;
+        }
+    
+        // Créer un objet Writer pour exporter en format XLSX
+        $writer = new Xlsx($spreadsheet);
+    
+        // Nom du fichier à télécharger
+        $fileName = 'liste_categories.xlsx';
+    
+        // Définir les entêtes pour le téléchargement
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $fileName . '"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+    
+        // Écrire le fichier Excel dans la réponse HTTP
+        $writer->save('php://output');
+        $response->send();
+    
+        // Retourner une réponse vide (il n'y a pas de vue associée)
+        return $response;
+    }
+    
     
 
 }

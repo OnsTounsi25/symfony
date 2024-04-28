@@ -3,7 +3,7 @@
 {% block title %}New Categorie{% endblock %}
 
 {% block body %}
-    <h1>Create new Categorie</h1>
+    <h1>Ajouter une nouvelle Categorie</h1>
 
     {# Inclusion du formulaire de création de catégorie #}
     {{ include('categorie/_form.html.twig') }}
@@ -16,5 +16,5 @@
     {% endfor %}
 
     {# Lien pour retourner à la liste des catégories #}
-    <a href="{{ path('app_categorie_index') }}">Back to list</a>
+    <a href="{{ path('app_categorie_index') }}">Retourner a la liste</a>
 {% endblock %}

@@ -28,4 +28,24 @@ class ProduitRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+     /**
+     * Recherche des produits par nom.
+     *
+     * @param string $searchTerm Le terme de recherche par nom
+     * @return Produit[] Une liste de produits correspondant au terme de recherche
+     */
+    public function rechercherParNom(string $searchTerm): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.nom LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
+            ->getQuery()
+            ->getResult();
+    }
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -47,18 +47,6 @@ class PreviewController extends AbstractController
     {
         return $this->render('back-office.html.twig');
     }
-    /*#[Route('/ghofrane/add-student', name: 'app_add_student')]
-    public function addStudent(): Response
-    {
-        // Votre logique pour la page add-student, par exemple, rendu d'un modèle Twig
-        return $this->render('student/add-student.html.twig');
-    }*/
 
-    /*#[Route('/ghofrane/student-element', name: 'app_student_element')]
-    public function studentelement(): Response
-    {
-        // Votre logique pour la page add-student, par exemple, rendu d'un modèle Twig
-        return $this->render('student/student-element.html.twig');
-    }*/
 
 }

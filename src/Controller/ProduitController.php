@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Mpdf\Mpdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 
 #[Route('/produit')]
@@ -110,6 +113,56 @@ class ProduitController extends AbstractController
             'produitStats' => $produitStats,
         ]);
     }
+    #[Route('/rechercher-produits-par-nom', name: 'rechercher_produits_par_nom', methods: ['GET'])]
+    public function rechercherProduitsParNom(Request $request, ProduitRepository $produitRepository): JsonResponse
+    {
+        $searchTerm = $request->query->get('searchTerm');
+
+        // Recherche de produits par nom
+        $produits = $produitRepository->rechercherParNom($searchTerm);
+
+        // Préparer les données à renvoyer au format JSON
+        $jsonData = [];
+        foreach ($produits as $produit) {
+            $jsonData[] = [
+                'id' => $produit->getId(),
+                'nom' => $produit->getNom(),
+                // Ajoutez d'autres propriétés de produit à renvoyer si nécessaire
+            ];
+        }
+
+        return new JsonResponse($jsonData);
+    }
+    #[Route('/download-products-pdf', name: 'app_produit_download_pdf', methods: ['GET'])]
+    public function downloadProductsPdf(ProduitRepository $produitRepository): Response
+    {
+        // Récupérer la liste des produits
+        $produits = $produitRepository->findAll();
+    
+        // Configuration de Dompdf
+        $options = new Options();
+        $options->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($options);
+    
+        // Générer le contenu PDF avec les produits
+        $html = $this->renderView('produit/pdf.html.twig', [
+            'produits' => $produits,
+        ]);
+    
+        // Charger le contenu HTML dans Dompdf
+        $dompdf->loadHtml($html);
+    
+        // Générer le PDF
+        $dompdf->render();
+    
+        // Envoyer le PDF en réponse HTTP
+        $response = new Response($dompdf->output());
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment;filename="products.pdf"');
+    
+        return $response;
+    }
+   
  
 
 }
