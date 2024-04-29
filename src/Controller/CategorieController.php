@@ -14,11 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-use Mpdf\Mpdf;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 
 
@@ -172,17 +170,18 @@ class CategorieController extends AbstractController
     #[Route('/download-categories-excel', name: 'app_categorie_download_excel', methods: ['GET'])]
     public function downloadCategoriesExcel(CategorieRepository $categorieRepository): Response
     {
+
         // Récupérer la liste des catégories
         $categories = $categorieRepository->findAll();
-    
+
         // Créer un nouvel objet Spreadsheet
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-    
+
         // Entêtes de colonnes
         $sheet->setCellValue('A1', 'ID');
         $sheet->setCellValue('B1', 'Nom');
-    
+
         // Remplir les lignes avec les données des catégories
         $row = 2;
         foreach ($categories as $categorie) {
@@ -190,27 +189,26 @@ class CategorieController extends AbstractController
             $sheet->setCellValue('B' . $row, $categorie->getNomcategorie());
             $row++;
         }
-    
-        // Créer un objet Writer pour exporter en format XLSX
-        $writer = new Xlsx($spreadsheet);
-    
-        // Nom du fichier à télécharger
-        $fileName = 'liste_categories.xlsx';
-    
-        // Définir les entêtes pour le téléchargement
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment;filename="' . $fileName . '"');
-        $response->headers->set('Cache-Control', 'max-age=0');
-    
-        // Écrire le fichier Excel dans la réponse HTTP
+
+        // Créer un objet Writer pour exporter en format CSV
+        $writer = new Csv($spreadsheet);
+
+        // Capturer la sortie générée par l'écriture du fichier CSV
+        ob_start();
         $writer->save('php://output');
-        $response->send();
-    
-        // Retourner une réponse vide (il n'y a pas de vue associée)
+        $excelContent = ob_get_clean();
+
+        // Créer une nouvelle réponse avec le contenu du fichier CSV
+        $response = new Response($excelContent);
+
+        // Définir les entêtes pour le téléchargement
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment;filename="liste_categories.csv"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        // Retourner la réponse
         return $response;
     }
-    
     
 
 }

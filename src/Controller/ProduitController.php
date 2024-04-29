@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Mpdf\Mpdf;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 
 #[Route('/produit')]
@@ -34,7 +35,7 @@ class ProduitController extends AbstractController
     }
 
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager ,SluggerInterface $slugger): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
@@ -42,14 +43,17 @@ class ProduitController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('image')->getData();
+            $originalExtension = $file->guessExtension();
             if ($file) {
-                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $originalExtension;
                 $file->move(
                     $this->getParameter('upload_directory'),
-                    $fileName
+                    $newFilename
                 );
-                $produit->setImage($fileName);
             }
+            $produit->setImage($newFilename);
             $entityManager->persist($produit);
             $entityManager->flush();
             $this->addFlash('success', 'Produit créé avec succès! ');
