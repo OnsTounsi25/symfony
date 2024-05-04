@@ -18,6 +18,19 @@ class CategorieRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+     /**
+     * Trouver toutes les catégories triées par nom
+     *
+     * @return Categorie[] Retourne un tableau d'objets de catégorie triés par nom
+     */
+    public function findAllOrderedByName(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.nomcategorie', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
     // Ajoutez vos méthodes de repository personnalisées ici
 }

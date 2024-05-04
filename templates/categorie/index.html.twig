@@ -1,4 +1,4 @@
-{% extends 'back-office.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Categorie index{% endblock %}
 
@@ -38,6 +38,10 @@
     <p><a href="{{ path('app_categorie_new') }}">Ajouter une nouvelle catégorie</a></P>
     <p><a href="{{ path('app_categorie_download_pdf') }}">Télécharger en PDF</a></P>
     <P><a href="{{ path('app_categorie_download_excel') }}">Télécharger la liste des catégories en Excel</a></p>
+    <div class="float-right mb-3">
+    <a href="{{ path('app_trier_par_nom') }}" class="btn btn-sm height-auto px-4 py-3 btn-primary mr-2">Trier par Nom</a>
+    
+  </div>
 
     
 

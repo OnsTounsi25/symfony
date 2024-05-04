@@ -1,4 +1,4 @@
-{% extends 'back-office.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Produit {% endblock %}
 
@@ -52,4 +52,9 @@
     
     <p><a href="{{ path('app_categorie_index') }}">Retourner a la liste des categories</a></p>
         <p><a href="{{ path('app_produit_download_pdf') }}">Télécharger en PDF</a></P>
+
+         <div class="float-right mb-3">
+    <a href="{{ path('app_trier_par_prix') }}" class="btn btn-sm height-auto px-4 py-3 btn-primary mr-2">Trier par Prix</a>
+    
+  </div>
 {% endblock %}

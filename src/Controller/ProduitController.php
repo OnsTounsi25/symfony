@@ -166,6 +166,15 @@ class ProduitController extends AbstractController
     
         return $response;
     }
+    #[Route('/trier-par-prix', name: 'app_trier_par_prix', methods: ['GET'])]
+    public function trierParPrix(ProduitRepository $produitRepository): Response
+    {
+        $produits = $produitRepository->findBy([], ['prix' => 'ASC']);
+
+        return $this->render('produit/index.html.twig', [
+            'produits' => $produits,
+        ]);
+    }
    
  
 

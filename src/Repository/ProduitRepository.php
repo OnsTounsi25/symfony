@@ -48,4 +48,16 @@ class ProduitRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+      /**
+     * Trouver toutes les produitss triées par prix
+     *
+     * @return Produit[] Retourne un tableau d'objets de produit triés par prix
+     */
+    public function findAllOrderedByPrice(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.prix', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

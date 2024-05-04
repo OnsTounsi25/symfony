@@ -14,3 +14,9 @@ app_categorie_download_pdf:
 app_produit_download_pdf:
     path: /download-products-pdf
     controller: App\Controller\ProduitController::downloadProductsPdf
+app_trier_par_nom:
+    path: /trier-par-nom
+    controller: App\Controller\CategorieController::trierParNom
+app_trier_par_prix:
+    path: /trier-par-prix
+    controller: App\Controller\ProduitController::trierParPrix

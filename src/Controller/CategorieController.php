@@ -42,6 +42,18 @@ class CategorieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('image')->getData();
+            $originalExtension = $file->guessExtension();
+            if ($file) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $originalExtension;
+                $file->move(
+                    $this->getParameter('upload_directory'),
+                    $newFilename
+                );
+            }
+            $produit->setImage($newFilename);
             $entityManager->persist($produit);
             $entityManager->flush();
             $this->addFlash('success', 'Produit créé avec succès! ');
@@ -209,6 +221,17 @@ class CategorieController extends AbstractController
         // Retourner la réponse
         return $response;
     }
+    #[Route('/trier-par-nom', name: 'app_trier_par_nom', methods: ['GET'])]
+    public function trierParNom(CategorieRepository $categorieRepository): Response
+    {
+        $categories = $categorieRepository->findBy([], ['nomcategorie' => 'ASC']);
+
+        return $this->render('categorie/index.html.twig', [
+            'categories' => $categories,
+        ]);
+    }
+
+   
     
 
 }
